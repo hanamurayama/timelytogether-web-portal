@@ -63,7 +63,7 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
             Review Reminder
           </CardTitle>
           <p className="text-muted-foreground mt-2">
-            Please review the reminder details below. Click Save to confirm and schedule the reminder.
+            Click Save Reminder to confirm and schedule the reminder.
           </p>
         </CardHeader>
         <CardContent>

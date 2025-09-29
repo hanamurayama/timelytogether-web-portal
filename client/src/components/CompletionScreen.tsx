@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Plus, Home } from "lucide-react";
 import type { ReminderFormData } from './CreateReminderForm';
 
@@ -11,7 +10,6 @@ interface CompletionScreenProps {
 }
 
 export default function CompletionScreen({ reminderData, onCreateAnother, onGoHome }: CompletionScreenProps) {
-
   const handleCreateAnother = () => {
     console.log('Creating another reminder');
     onCreateAnother();

@@ -98,21 +98,25 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
 
               <div className="space-y-2">
                 <Label htmlFor="message" className="text-base font-medium">
-                  Reminder Message
+                  Warm note for your family member
                 </Label>
                 <div className="relative">
                   <Textarea
                     id="message"
                     data-testid="input-message"
+                    aria-label="Warm note for your family member"
                     value={formData.message}
                     onChange={(e) => updateField('message', e.target.value)}
-                    placeholder="Remember to take your blood pressure medication with water after breakfast."
+                    placeholder="One step at a time — you've got this!"
                     maxLength={120}
                     rows={3}
                     className="text-base resize-none"
                   />
                   <div className={`text-sm mt-1 ${messageLength > 110 ? 'text-destructive' : 'text-muted-foreground'}`}>
                     {messageLength}/120 characters
+                  </div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    Examples: "One step at a time — you've got this!" | "Don't forget 😊 I'll check in later!" | "Thinking of you — love, Emily."
                   </div>
                 </div>
               </div>
@@ -159,10 +163,10 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
 
               <div className="space-y-2">
                 <Label htmlFor="recurrence" className="text-base font-medium">
-                  Repeat Pattern
+                  Repeat
                 </Label>
                 <Select value={formData.recurrence} onValueChange={(value: any) => updateField('recurrence', value)}>
-                  <SelectTrigger data-testid="select-recurrence" className="h-12">
+                  <SelectTrigger data-testid="select-recurrence" className="h-12" aria-label="Repeat">
                     <SelectValue placeholder="Select repeat pattern" />
                   </SelectTrigger>
                   <SelectContent>
@@ -191,7 +195,7 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                     onCheckedChange={(checked) => updateField('completionAlerts', checked)}
                   />
                   <Label htmlFor="completionAlerts" className="text-base cursor-pointer">
-                    Send completion alerts
+                    Notify me when done
                   </Label>
                 </div>
 
