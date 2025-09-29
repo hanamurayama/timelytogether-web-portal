@@ -31,7 +31,7 @@ export default function CompletionScreen({ reminderData, onCreateAnother, onGoHo
             Reminder Created Successfully!
           </CardTitle>
           <p className="text-muted-foreground mt-2">
-            Your reminder has been saved and scheduled. The senior will receive the reminder as configured.
+            Reminder created and sent to your TimelyTogether device.
           </p>
         </CardHeader>
         <CardContent>
