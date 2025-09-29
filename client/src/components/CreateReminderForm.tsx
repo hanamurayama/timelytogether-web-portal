@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar, Clock, Mail, User } from "lucide-react";
+import { Calendar, Clock, Mail } from "lucide-react";
 
 export interface ReminderFormData {
   title: string;
@@ -14,8 +14,6 @@ export interface ReminderFormData {
   date: string;
   time: string;
   recurrence: 'none' | 'daily' | 'weekly' | 'monthly';
-  seniorId: string;
-  emailNotifications: boolean;
   completionAlerts: boolean;
   customNotificationEmail: string;
 }
@@ -33,8 +31,6 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
     date: initialData?.date || '',
     time: initialData?.time || '',
     recurrence: initialData?.recurrence || 'none',
-    seniorId: initialData?.seniorId || '',
-    emailNotifications: initialData?.emailNotifications || false,
     completionAlerts: initialData?.completionAlerts || false,
     customNotificationEmail: initialData?.customNotificationEmail || '',
   });
@@ -63,7 +59,6 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
            formData.message.trim() && 
            formData.date && 
            formData.time && 
-           formData.seniorId &&
            titleLength <= 40 &&
            messageLength <= 120;
   };
@@ -122,22 +117,6 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="seniorId" className="text-base font-medium flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  Senior Profile
-                </Label>
-                <Select value={formData.seniorId} onValueChange={(value) => updateField('seniorId', value)}>
-                  <SelectTrigger data-testid="select-senior" className="h-12">
-                    <SelectValue placeholder="Select senior to remind" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="senior-1">Grandma Dorothy</SelectItem>
-                    <SelectItem value="senior-2">Grandpa Harold</SelectItem>
-                    <SelectItem value="senior-3">Aunt Margaret</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
 
             {/* Scheduling */}
@@ -204,18 +183,6 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
               </h3>
               
               <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="emailNotifications"
-                    data-testid="checkbox-email-notifications"
-                    checked={formData.emailNotifications}
-                    onCheckedChange={(checked) => updateField('emailNotifications', checked)}
-                  />
-                  <Label htmlFor="emailNotifications" className="text-base cursor-pointer">
-                    Send email reminders to senior
-                  </Label>
-                </div>
-
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="completionAlerts"

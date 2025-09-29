@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Mail, User, CheckCircle, Edit } from "lucide-react";
+import { Calendar, Clock, Mail, CheckCircle, Edit } from "lucide-react";
 import type { ReminderFormData } from './CreateReminderForm';
 
 interface ReviewReminderProps {
@@ -43,14 +43,6 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
     return recurrenceMap[recurrence as keyof typeof recurrenceMap] || recurrence;
   };
 
-  const getSeniorName = (seniorId: string) => {
-    const seniorMap = {
-      'senior-1': 'Grandma Dorothy',
-      'senior-2': 'Grandpa Harold',
-      'senior-3': 'Aunt Margaret'
-    };
-    return seniorMap[seniorId as keyof typeof seniorMap] || 'Unknown Senior';
-  };
 
   const handleSave = () => {
     console.log('Saving reminder:', reminderData);
@@ -92,13 +84,6 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
                     <div className="text-base" data-testid="text-message">
                       {reminderData.message}
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">For:</span>
-                    <Badge variant="secondary" data-testid="badge-senior">
-                      {getSeniorName(reminderData.seniorId)}
-                    </Badge>
                   </div>
                 </div>
               </div>
@@ -149,16 +134,6 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
                   Email Notifications
                 </h3>
                 <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-base">Email reminders to senior</span>
-                    <Badge 
-                      variant={reminderData.emailNotifications ? 'default' : 'outline'}
-                      data-testid="badge-email-notifications"
-                    >
-                      {reminderData.emailNotifications ? 'Enabled' : 'Disabled'}
-                    </Badge>
-                  </div>
-                  
                   <div className="flex items-center justify-between">
                     <span className="text-base">Completion alerts</span>
                     <Badge 

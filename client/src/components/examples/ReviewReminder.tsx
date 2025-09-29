@@ -9,8 +9,6 @@ export default function ReviewReminderExample() {
     date: '2025-01-15',
     time: '09:00',
     recurrence: 'daily',
-    seniorId: 'senior-1',
-    emailNotifications: true,
     completionAlerts: true,
     customNotificationEmail: 'family@example.com'
   };
