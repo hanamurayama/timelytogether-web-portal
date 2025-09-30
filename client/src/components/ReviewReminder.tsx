@@ -9,9 +9,10 @@ interface ReviewReminderProps {
   onSave: () => void;
   onEdit: () => void;
   onCancel?: () => void;
+  isSaving?: boolean;
 }
 
-export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel }: ReviewReminderProps) {
+export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel, isSaving = false }: ReviewReminderProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -172,6 +173,7 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
                 variant="outline"
                 onClick={handleEdit}
                 data-testid="button-edit"
+                disabled={isSaving}
                 className="flex-1 h-12 flex items-center justify-center gap-2"
               >
                 <Edit className="w-4 h-4" />
@@ -180,10 +182,11 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
               <Button
                 onClick={handleSave}
                 data-testid="button-save"
+                disabled={isSaving}
                 className="flex-1 h-12 flex items-center justify-center gap-2"
               >
                 <CheckCircle className="w-4 h-4" />
-                Save Reminder
+                {isSaving ? 'Saving...' : 'Save Reminder'}
               </Button>
             </div>
           </div>
