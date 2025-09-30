@@ -68,7 +68,7 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
       <Card>
         <CardHeader className="pb-6">
           <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-            <Calendar className="w-6 h-6 text-primary" />
+            <Calendar className="w-6 h-6 text-[#d9825b]" />
             Create New Reminder
           </CardTitle>
         </CardHeader>
@@ -126,7 +126,7 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
             {/* Scheduling */}
             <div className="space-y-4 border-t pt-6">
               <h3 className="text-lg font-medium flex items-center gap-2">
-                <Clock className="w-5 h-5" />
+                <Clock className="w-5 h-5 text-[#d9825b]" />
                 Schedule Settings
               </h3>
               
@@ -182,7 +182,7 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
             {/* Email Notifications */}
             <div className="space-y-4 border-t pt-6">
               <h3 className="text-lg font-medium flex items-center gap-2">
-                <Mail className="w-5 h-5" />
+                <Mail className="w-5 h-5 text-[#d9825b]" />
                 Email Notifications
               </h3>
               

@@ -59,7 +59,7 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
       <Card>
         <CardHeader className="pb-6">
           <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-            <CheckCircle className="w-6 h-6 text-primary" />
+            <CheckCircle className="w-6 h-6 text-[#d9825b]" />
             Review Reminder
           </CardTitle>
           <p className="text-muted-foreground mt-2">
@@ -91,7 +91,7 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
               {/* Schedule Information */}
               <div className="space-y-2">
                 <h3 className="text-lg font-medium flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
+                  <Calendar className="w-5 h-5 text-[#d9825b]" />
                   Schedule
                 </h3>
                 <div className="bg-muted/50 rounded-lg p-4 space-y-3">
@@ -130,7 +130,7 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
               {/* Email Settings */}
               <div className="space-y-2">
                 <h3 className="text-lg font-medium flex items-center gap-2">
-                  <Mail className="w-5 h-5" />
+                  <Mail className="w-5 h-5 text-[#d9825b]" />
                   Email Notifications
                 </h3>
                 <div className="bg-muted/50 rounded-lg p-4 space-y-3">
