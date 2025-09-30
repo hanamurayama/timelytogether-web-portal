@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Mail, CheckCircle, Edit } from "lucide-react";
+import { Calendar, Clock, Mail, CheckCircle, Edit, ArrowLeft } from "lucide-react";
 import type { ReminderFormData } from './CreateReminderForm';
 
 interface ReviewReminderProps {
@@ -55,14 +55,24 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto p-4 sm:p-6">
       <Card>
         <CardHeader className="pb-6">
-          <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-            <CheckCircle className="w-6 h-6 text-[#d9825b]" />
+          {onCancel && (
+            <button
+              onClick={onCancel}
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
+              data-testid="link-back"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </button>
+          )}
+          <CardTitle className="text-xl sm:text-2xl font-semibold flex items-center gap-2">
+            <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#d9825b]" />
             Review Reminder
           </CardTitle>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-sm sm:text-base text-muted-foreground mt-2">
             Click Save Reminder to confirm and schedule the reminder.
           </p>
         </CardHeader>
@@ -71,8 +81,8 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
             {/* Reminder Details */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <h3 className="text-lg font-medium">Reminder Details</h3>
-                <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <h3 className="text-base sm:text-lg font-medium">Reminder Details</h3>
+                <div className="bg-muted/50 rounded-lg p-3 sm:p-4 space-y-3">
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Title</div>
                     <div className="text-base font-medium" data-testid="text-title">
@@ -90,11 +100,11 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
 
               {/* Schedule Information */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-[#d9825b]" />
+                <h3 className="text-base sm:text-lg font-medium flex items-center gap-2">
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#d9825b]" />
                   Schedule
                 </h3>
-                <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <div className="bg-muted/50 rounded-lg p-3 sm:p-4 space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-muted-foreground" />
@@ -129,11 +139,11 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
 
               {/* Email Settings */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium flex items-center gap-2">
-                  <Mail className="w-5 h-5 text-[#d9825b]" />
+                <h3 className="text-base sm:text-lg font-medium flex items-center gap-2">
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-[#d9825b]" />
                   Email Notifications
                 </h3>
-                <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <div className="bg-muted/50 rounded-lg p-3 sm:p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-base">Completion alerts</span>
                     <Badge 
@@ -157,22 +167,12 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
             </div>
 
             {/* Actions */}
-            <div className="flex gap-4 pt-6 border-t">
-              {onCancel && (
-                <Button
-                  variant="outline"
-                  onClick={onCancel}
-                  data-testid="button-cancel"
-                  className="flex-1 h-12"
-                >
-                  Cancel
-                </Button>
-              )}
+            <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t">
               <Button
                 variant="outline"
                 onClick={handleEdit}
                 data-testid="button-edit"
-                className="flex-1 h-12 flex items-center gap-2"
+                className="flex-1 h-12 flex items-center justify-center gap-2"
               >
                 <Edit className="w-4 h-4" />
                 Edit
@@ -180,7 +180,7 @@ export default function ReviewReminder({ reminderData, onSave, onEdit, onCancel 
               <Button
                 onClick={handleSave}
                 data-testid="button-save"
-                className="flex-1 h-12 flex items-center gap-2"
+                className="flex-1 h-12 flex items-center justify-center gap-2"
               >
                 <CheckCircle className="w-4 h-4" />
                 Save Reminder
