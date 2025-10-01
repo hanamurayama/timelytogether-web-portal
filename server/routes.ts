@@ -5,6 +5,21 @@ import { insertReminderSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // simple endpoints for your e-screen
+  app.get("/__ok", (_req, res) => {
+    res.type("text/plain").send("ok");
+  });
+
+  app.get("/api/screen", (_req, res) => {
+    console.log("[HIT] /api/screen");
+    res.type("text/plain").send("Take your 2pm meds 💊");
+  });
+
+  app.get("/screen", (_req, res) => {
+    console.log("[HIT] /screen");
+    res.type("text/plain").send("Take your 2pm meds 💊");
+  });
+
   // Reminder routes
   app.post("/api/reminders", async (req, res) => {
     try {
@@ -44,6 +59,5 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
-
   return httpServer;
 }
