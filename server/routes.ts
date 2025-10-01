@@ -10,14 +10,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.type("text/plain").send("ok");
   });
 
-  app.get("/api/screen", (_req, res) => {
-    console.log("[HIT] /api/screen");
-    res.type("text/plain").send("Take your 2pm meds 💊");
+  app.get("/api/screen", async (_req, res) => {
+    try {
+      console.log("[HIT] /api/screen");
+
+      // Get all reminders
+      const reminders = await storage.getAllReminders();
+
+      if (reminders.length === 0) {
+        return res.type("text/plain").send("No reminders set yet!");
+      }
+
+      // Get today's date
+      const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+
+      // Find reminders for today
+      const todaysReminders = reminders.filter((r) => r.date === today);
+
+      if (todaysReminders.length === 0) {
+        return res
+          .type("text/plain")
+          .send("No reminders for today! Enjoy your day");
+      }
+
+      // Sort by time
+      todaysReminders.sort((a, b) => a.time.localeCompare(b.time));
+
+      // Format without header
+      let response = "";
+
+      todaysReminders.forEach((reminder, index) => {
+        response += `At: ${reminder.time}\n`;
+        response += `Plan: ${reminder.title}\n`;
+        response += `From your family: ${reminder.message}\n`;
+        if (index < todaysReminders.length - 1) {
+          response += `\n---\n\n`;
+        }
+      });
+
+      res.type("text/plain").send(response);
+    } catch (error) {
+      console.error("Error fetching screen message:", error);
+      res.type("text/plain").send("Error loading reminders");
+    }
   });
 
   app.get("/screen", (_req, res) => {
     console.log("[HIT] /screen");
-    res.type("text/plain").send("Take your 2pm meds 💊");
+    res.type("text/plain").send("Take your 2pm meds");
   });
 
   // Reminder routes
