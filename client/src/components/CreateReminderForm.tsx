@@ -4,7 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar, Clock, Mail } from "lucide-react";
 
@@ -13,7 +19,7 @@ export interface ReminderFormData {
   message: string;
   date: string;
   time: string;
-  recurrence: 'none' | 'daily' | 'weekly' | 'monthly';
+  recurrence: "none" | "daily" | "weekly" | "monthly";
   completionAlerts: boolean;
   customNotificationEmail: string;
 }
@@ -24,15 +30,19 @@ interface CreateReminderFormProps {
   initialData?: Partial<ReminderFormData>;
 }
 
-export default function CreateReminderForm({ onSubmit, onCancel, initialData }: CreateReminderFormProps) {
+export default function CreateReminderForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: CreateReminderFormProps) {
   const [formData, setFormData] = useState<ReminderFormData>({
-    title: initialData?.title || '',
-    message: initialData?.message || '',
-    date: initialData?.date || '',
-    time: initialData?.time || '',
-    recurrence: initialData?.recurrence || 'none',
+    title: initialData?.title || "",
+    message: initialData?.message || "",
+    date: initialData?.date || "",
+    time: initialData?.time || "",
+    recurrence: initialData?.recurrence || "none",
     completionAlerts: initialData?.completionAlerts || false,
-    customNotificationEmail: initialData?.customNotificationEmail || '',
+    customNotificationEmail: initialData?.customNotificationEmail || "",
   });
 
   const [titleLength, setTitleLength] = useState(formData.title.length);
@@ -40,27 +50,29 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted with data:', formData);
+    console.log("Form submitted with data:", formData);
     onSubmit(formData);
   };
 
   const updateField = (field: keyof ReminderFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
-    if (field === 'title') {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (field === "title") {
       setTitleLength(value.length);
-    } else if (field === 'message') {
+    } else if (field === "message") {
       setMessageLength(value.length);
     }
   };
 
   const isFormValid = () => {
-    return formData.title.trim() && 
-           formData.message.trim() && 
-           formData.date && 
-           formData.time && 
-           titleLength <= 40 &&
-           messageLength <= 120;
+    return (
+      formData.title.trim() &&
+      formData.message.trim() &&
+      formData.date &&
+      formData.time &&
+      titleLength <= 40 &&
+      messageLength <= 120
+    );
   };
 
   return (
@@ -85,12 +97,14 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                     id="title"
                     data-testid="input-title"
                     value={formData.title}
-                    onChange={(e) => updateField('title', e.target.value)}
+                    onChange={(e) => updateField("title", e.target.value)}
                     placeholder="Take morning medication"
                     maxLength={40}
                     className="text-base h-12"
                   />
-                  <div className={`text-sm mt-1 ${titleLength > 35 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  <div
+                    className={`text-sm mt-1 ${titleLength > 35 ? "text-destructive" : "text-muted-foreground"}`}
+                  >
                     {titleLength}/40 characters
                   </div>
                 </div>
@@ -106,21 +120,24 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                     data-testid="input-message"
                     aria-label="Warm note for your family member"
                     value={formData.message}
-                    onChange={(e) => updateField('message', e.target.value)}
+                    onChange={(e) => updateField("message", e.target.value)}
                     placeholder="One step at a time — you've got this!"
                     maxLength={120}
                     rows={3}
                     className="text-base resize-none"
                   />
-                  <div className={`text-sm mt-1 ${messageLength > 110 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  <div
+                    className={`text-sm mt-1 ${messageLength > 110 ? "text-destructive" : "text-muted-foreground"}`}
+                  >
                     {messageLength}/120 characters
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    Examples: "One step at a time — you've got this!" | "Don't forget 😊 I'll check in later!" | "Thinking of you — love, Emily."
+                    Examples: "One step at a time — you've got this!" | "Don't
+                    forget 😊 I'll check in later!" | "Thinking of you — love,
+                    Emily."
                   </div>
                 </div>
               </div>
-
             </div>
 
             {/* Scheduling */}
@@ -129,7 +146,7 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                 <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-[#d9825b]" />
                 Schedule Settings
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="date" className="text-base font-medium">
@@ -140,9 +157,8 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                     data-testid="input-date"
                     type="date"
                     value={formData.date}
-                    onChange={(e) => updateField('date', e.target.value)}
+                    onChange={(e) => updateField("date", e.target.value)}
                     className="text-base h-12"
-                    min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
 
@@ -155,7 +171,7 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                     data-testid="input-time"
                     type="time"
                     value={formData.time}
-                    onChange={(e) => updateField('time', e.target.value)}
+                    onChange={(e) => updateField("time", e.target.value)}
                     className="text-base h-12"
                   />
                 </div>
@@ -165,8 +181,17 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                 <Label htmlFor="recurrence" className="text-base font-medium">
                   Repeat
                 </Label>
-                <Select value={formData.recurrence} onValueChange={(value: any) => updateField('recurrence', value)}>
-                  <SelectTrigger data-testid="select-recurrence" className="h-12" aria-label="Repeat">
+                <Select
+                  value={formData.recurrence}
+                  onValueChange={(value: any) =>
+                    updateField("recurrence", value)
+                  }
+                >
+                  <SelectTrigger
+                    data-testid="select-recurrence"
+                    className="h-12"
+                    aria-label="Repeat"
+                  >
                     <SelectValue placeholder="Select repeat pattern" />
                   </SelectTrigger>
                   <SelectContent>
@@ -185,23 +210,31 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-[#d9825b]" />
                 Email Notifications
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="completionAlerts"
                     data-testid="checkbox-completion-alerts"
                     checked={formData.completionAlerts}
-                    onCheckedChange={(checked) => updateField('completionAlerts', checked)}
+                    onCheckedChange={(checked) =>
+                      updateField("completionAlerts", checked)
+                    }
                   />
-                  <Label htmlFor="completionAlerts" className="text-base cursor-pointer">
+                  <Label
+                    htmlFor="completionAlerts"
+                    className="text-base cursor-pointer"
+                  >
                     Notify me when done
                   </Label>
                 </div>
 
                 {formData.completionAlerts && (
                   <div className="space-y-2 ml-6">
-                    <Label htmlFor="customEmail" className="text-base font-medium">
+                    <Label
+                      htmlFor="customEmail"
+                      className="text-base font-medium"
+                    >
                       Custom notification email (optional)
                     </Label>
                     <Input
@@ -209,7 +242,9 @@ export default function CreateReminderForm({ onSubmit, onCancel, initialData }: 
                       data-testid="input-custom-email"
                       type="email"
                       value={formData.customNotificationEmail}
-                      onChange={(e) => updateField('customNotificationEmail', e.target.value)}
+                      onChange={(e) =>
+                        updateField("customNotificationEmail", e.target.value)
+                      }
                       placeholder="family@example.com"
                       className="text-base h-12"
                     />

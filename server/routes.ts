@@ -14,51 +14,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("[HIT] /api/screen");
 
-      // Get all reminders
       const reminders = await storage.getAllReminders();
 
       if (reminders.length === 0) {
         return res.type("text/plain").send("No reminders set yet!");
       }
 
-      // Get today's date
-      const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+      // Get today's date and current time
+      const now = new Date();
+      const today = now.toISOString().split("T")[0];
+      const currentTime = now.toTimeString().slice(0, 5); // Format: HH:MM
 
-      // Find reminders for today
-      const todaysReminders = reminders.filter((r) => r.date === today);
-
-      if (todaysReminders.length === 0) {
-        return res
-          .type("text/plain")
-          .send("No reminders for today! Enjoy your day");
-      }
-
-      // Sort by time
-      todaysReminders.sort((a, b) => a.time.localeCompare(b.time));
-
-      // Format without header
-      let response = "";
-
-      todaysReminders.forEach((reminder, index) => {
-        response += `At: ${reminder.time}\n`;
-        response += `Plan: ${reminder.title}\n`;
-        response += `From your family: ${reminder.message}\n`;
-        if (index < todaysReminders.length - 1) {
-          response += `\n---\n\n`;
+      // Get all reminders from today onwards
+      const upcomingReminders = reminders.filter((r) => {
+        // If it's today, only show reminders that haven't passed yet
+        if (r.date === today) {
+          return r.time >= currentTime;
         }
+        // Show all future date reminders
+        return r.date > today;
       });
 
+      if (upcomingReminders.length === 0) {
+        return res.type("text/plain").send("No upcoming reminders!");
+      }
+
+      // Sort by date then time to get the NEXT one
+      upcomingReminders.sort((a, b) => {
+        if (a.date !== b.date) return a.date.localeCompare(b.date);
+        return a.time.localeCompare(b.time);
+      });
+
+      // Get only the FIRST (next) reminder
+      const nextReminder = upcomingReminders[0];
+
+      // Format date with day abbreviation (without year)
+      const reminderDate = new Date(nextReminder.date + "T00:00:00");
+      const dayAbbrev = reminderDate
+        .toLocaleDateString("en-US", { weekday: "short" })
+        .toUpperCase();
+      const monthDay = reminderDate.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+      }); // MM/DD
+
+      // Convert 24-hour time to 12-hour with AM/PM
+      const [hours24, minutes] = nextReminder.time.split(":");
+      const hours = parseInt(hours24);
+      const ampm = hours >= 12 ? "PM" : "AM";
+      const hours12 = hours % 12 || 12; // Convert 0 to 12 for midnight
+      const time12Hour = `${hours12}:${minutes} ${ampm}`;
+
+      // Format response with combined date/time line
+      let response = "";
+      response += `When: ${dayAbbrev}, ${monthDay}, ${time12Hour}\n`;
+      response += `Plan: ${nextReminder.title}\n`;
+      response += `From your family: ${nextReminder.message}`;
+
       res.type("text/plain").send(response);
+      
     } catch (error) {
       console.error("Error fetching screen message:", error);
       res.type("text/plain").send("Error loading reminders");
     }
   });
-
-  app.get("/screen", (_req, res) => {
-    console.log("[HIT] /screen");
-    res.type("text/plain").send("Take your 2pm meds");
-  });
+  //Test
+  // app.get("/screen", (_req, res) => {
+  //   console.log("[HIT] /screen");
+  //   res.type("text/plain").send("Take your 2pm meds");
+  // });
 
   // Reminder routes
   app.post("/api/reminders", async (req, res) => {
