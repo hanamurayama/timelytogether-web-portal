@@ -90,7 +90,7 @@ export default function CreateReminderForm({
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="title" className="text-base font-medium">
-                  Reminder Title
+                  Reminder
                 </Label>
                 <div className="relative">
                   <Input
@@ -112,13 +112,13 @@ export default function CreateReminderForm({
 
               <div className="space-y-2">
                 <Label htmlFor="message" className="text-base font-medium">
-                  Warm note for your family member
+                  Note for your family member
                 </Label>
                 <div className="relative">
                   <Textarea
                     id="message"
                     data-testid="input-message"
-                    aria-label="Warm note for your family member"
+                    aria-label="Note for your family member"
                     value={formData.message}
                     onChange={(e) => updateField("message", e.target.value)}
                     placeholder="One step at a time — you've got this!"
