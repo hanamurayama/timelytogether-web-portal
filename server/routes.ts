@@ -20,14 +20,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.type("text/plain").send("No reminders set yet!");
       }
 
-      // Get today's date and current time
+      // Get today's date and current time with 5-minute buffer
       const now = new Date();
       const today = now.toISOString().split("T")[0];
-      const currentTime = now.toTimeString().slice(0, 5); // Format: HH:MM
+      const bufferTime = new Date(now.getTime() - 5 * 60000); // 5 min earlier
+      const currentTime = bufferTime.toTimeString().slice(0, 5); // Format: HH:MM
 
       // Get all reminders from today onwards
       const upcomingReminders = reminders.filter((r) => {
-        // If it's today, only show reminders that haven't passed yet
+        // If it's today, only show reminders that haven't passed yet (with buffer)
         if (r.date === today) {
           return r.time >= currentTime;
         }
@@ -72,17 +73,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       response += `From your family: ${nextReminder.message}`;
 
       res.type("text/plain").send(response);
-      
     } catch (error) {
       console.error("Error fetching screen message:", error);
       res.type("text/plain").send("Error loading reminders");
     }
   });
-  //Test
-  // app.get("/screen", (_req, res) => {
-  //   console.log("[HIT] /screen");
-  //   res.type("text/plain").send("Take your 2pm meds");
-  // });
 
   // Reminder routes
   app.post("/api/reminders", async (req, res) => {
