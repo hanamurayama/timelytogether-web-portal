@@ -20,11 +20,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.type("text/plain").send("No reminders set yet!");
       }
 
-      // Get today's date and current time with 5-minute buffer
+      // Get current time in Los Angeles timezone
       const now = new Date();
-      const today = now.toISOString().split("T")[0];
-      const bufferTime = new Date(now.getTime() - 5 * 60000); // 5 min earlier
-      const currentTime = bufferTime.toTimeString().slice(0, 5); // Format: HH:MM
+      const losAngelesTime = new Date(
+        now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }),
+      );
+
+      // Format date as YYYY-MM-DD in LA timezone
+      const year = losAngelesTime.getFullYear();
+      const month = String(losAngelesTime.getMonth() + 1).padStart(2, "0");
+      const day = String(losAngelesTime.getDate()).padStart(2, "0");
+      const today = `${year}-${month}-${day}`;
+
+      // Get current time in HH:MM format with 5-minute buffer
+      const bufferTime = new Date(losAngelesTime.getTime() - 5 * 60000);
+      const hours = bufferTime.getHours().toString().padStart(2, "0");
+      const minutes = bufferTime.getMinutes().toString().padStart(2, "0");
+      const currentTime = `${hours}:${minutes}`;
 
       // Get all reminders from today onwards
       const upcomingReminders = reminders.filter((r) => {
@@ -57,16 +69,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const monthDay = reminderDate.toLocaleDateString("en-US", {
         month: "2-digit",
         day: "2-digit",
-      }); // MM/DD
+      });
 
       // Convert 24-hour time to 12-hour with AM/PM
-      const [hours24, minutes] = nextReminder.time.split(":");
-      const hours = parseInt(hours24);
-      const ampm = hours >= 12 ? "PM" : "AM";
-      const hours12 = hours % 12 || 12; // Convert 0 to 12 for midnight
-      const time12Hour = `${hours12}:${minutes} ${ampm}`;
+      const [hours24, minutesStr] = nextReminder.time.split(":");
+      const hour = parseInt(hours24);
+      const ampm = hour >= 12 ? "PM" : "AM";
+      const hours12 = hour % 12 || 12;
+      const time12Hour = `${hours12}:${minutesStr} ${ampm}`;
 
-      // Format response with combined date/time line
+      // Format response
       let response = "";
       response += `When: ${dayAbbrev}, ${monthDay}, ${time12Hour}\n`;
       response += `Plan: ${nextReminder.title}\n`;
