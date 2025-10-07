@@ -156,6 +156,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/reminders/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteReminder(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Reminder not found" });
+      }
+      res.json({ success: true, message: "Reminder deleted" });
+    } catch (error) {
+      console.error("Error deleting reminder:", error);
+      res.status(500).json({ error: "Failed to delete reminder" });
+    }
+  });
+
   app.get("/api/reminders/:id", async (req, res) => {
     try {
       const reminder = await storage.getReminder(req.params.id);

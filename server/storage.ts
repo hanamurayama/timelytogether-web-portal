@@ -1,17 +1,20 @@
-import { type User, type InsertUser, type Reminder, type InsertReminder } from "@shared/schema";
+import {
+  type User,
+  type InsertUser,
+  type Reminder,
+  type InsertReminder,
+} from "@shared/schema";
 import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   createReminder(reminder: InsertReminder): Promise<Reminder>;
   getReminder(id: string): Promise<Reminder | undefined>;
   getAllReminders(): Promise<Reminder[]>;
+  deleteReminder(id: string): Promise<boolean>; // ADD THIS LINE
 }
 
 export class MemStorage implements IStorage {
@@ -61,6 +64,11 @@ export class MemStorage implements IStorage {
     return Array.from(this.reminders.values()).sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
+  }
+
+  // ADD THIS METHOD
+  async deleteReminder(id: string): Promise<boolean> {
+    return this.reminders.delete(id);
   }
 }
 
