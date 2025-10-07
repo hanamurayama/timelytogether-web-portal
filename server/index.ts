@@ -13,6 +13,13 @@ app.get("/screen", (_req: Request, res: Response) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// ADD IT HERE:
+app.post("/api/notify-completion", async (req, res) => {
+  const { plan, completedAt } = req.body;
+  console.log("Notification request received:", { plan, completedAt });
+  res.json({ success: true, message: "Notification received" });
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;

@@ -210,7 +210,6 @@ export default function CreateReminderForm({
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-[#d9825b]" />
                 Email Notifications
               </h3>
-
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -228,28 +227,6 @@ export default function CreateReminderForm({
                     Notify me when done
                   </Label>
                 </div>
-
-                {formData.completionAlerts && (
-                  <div className="space-y-2 ml-6">
-                    <Label
-                      htmlFor="customEmail"
-                      className="text-base font-medium"
-                    >
-                      Custom notification email (optional)
-                    </Label>
-                    <Input
-                      id="customEmail"
-                      data-testid="input-custom-email"
-                      type="email"
-                      value={formData.customNotificationEmail}
-                      onChange={(e) =>
-                        updateField("customNotificationEmail", e.target.value)
-                      }
-                      placeholder="family@example.com"
-                      className="text-base h-12"
-                    />
-                  </div>
-                )}
               </div>
             </div>
 

@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 // Hardcoded notification email for testing
-const NOTIFICATION_EMAIL = "your-email@gmail.com"; // Replace with YOUR email
+const NOTIFICATION_EMAIL = "flower.hana0323@gmail.com"; // Replace with YOUR email
 const NOTIFICATIONS_ENABLED = true; // Simple on/off switch
 
 // Email transporter

@@ -3,11 +3,54 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertReminderSchema } from "@shared/schema";
 import { z } from "zod";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+// Email configuration
+const NOTIFICATION_EMAIL = "flower.hana0323@gmail.com"; // Replace with YOUR actual email
+const NOTIFICATIONS_ENABLED = true;
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  console.log("🔥 REGISTERING ROUTES - START");
+
   // simple endpoints for your e-screen
   app.get("/__ok", (_req, res) => {
     res.type("text/plain").send("ok");
+  });
+
+  // NEW: Task completion notification endpoint
+  app.post("/api/notify-completion", async (req, res) => {
+    const { plan, completedAt } = req.body;
+
+    if (!NOTIFICATIONS_ENABLED) {
+      return res.json({ success: true, message: "Notifications disabled" });
+    }
+
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: NOTIFICATION_EMAIL,
+        subject: `✅ ${plan} completed!`,
+        text: `${plan} is marked done!${completedAt ? `\nCompleted at: ${completedAt}` : ""}`,
+        html: `<h2>${plan} is marked done!</h2>${completedAt ? `<p>Completed at: ${completedAt}</p>` : ""}`,
+      });
+
+      console.log(`✅ Notification sent for: ${plan}`);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("❌ Email error:", error);
+      res.status(500).json({ success: false, error: (error as Error).message });
+    }
   });
 
   app.get("/api/screen", async (_req, res) => {
@@ -127,6 +170,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error fetching reminder:", error);
       res.status(500).json({ error: "Failed to fetch reminder" });
     }
+  });
+
+  app.get("/api/test", (_req, res) => {
+    res.json({ message: "Routes file is working!" });
   });
 
   const httpServer = createServer(app);
