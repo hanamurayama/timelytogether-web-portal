@@ -8,19 +8,19 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Email configuration
-const NOTIFICATION_EMAIL = "flower.hana0323@gmail.com"; // Replace with YOUR actual email
-const NOTIFICATIONS_ENABLED = true;
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Email configuration
+  const NOTIFICATION_EMAIL = "flower.hana0323@gmail.com";
+  const NOTIFICATIONS_ENABLED = true;
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
   console.log("🔥 REGISTERING ROUTES - START");
 
   // simple endpoints for your e-screen
@@ -28,9 +28,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.type("text/plain").send("ok");
   });
 
-  // NEW: Task completion notification endpoint
+  app.get("/api/notify-completion-test", async (req, res) => {
+    console.log("🚀 GET NOTIFY ENDPOINT HIT!");
+    res.json({ success: true, message: "GET version works!" });
+  });
+
+  // Task completion notification endpoint
   app.post("/api/notify-completion", async (req, res) => {
+    console.log("🚀 POST ENDPOINT HIT!");
     const { plan, completedAt } = req.body;
+    console.log("Received data:", { plan, completedAt });
 
     if (!NOTIFICATIONS_ENABLED) {
       return res.json({ success: true, message: "Notifications disabled" });
@@ -45,13 +52,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         html: `<h2>${plan} is marked done!</h2>${completedAt ? `<p>Completed at: ${completedAt}</p>` : ""}`,
       });
 
-      console.log(`✅ Notification sent for: ${plan}`);
-      res.json({ success: true });
+      console.log(`✅ Email sent for: ${plan}`);
+      res.json({ success: true, message: "Notification sent!" });
     } catch (error) {
       console.error("❌ Email error:", error);
       res.status(500).json({ success: false, error: (error as Error).message });
     }
   });
+
+  console.log("✅ Registered /api/notify-completion endpoint");
 
   app.get("/api/screen", async (_req, res) => {
     try {
@@ -63,31 +72,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.type("text/plain").send("No reminders set yet!");
       }
 
-      // Get current time in Los Angeles timezone
       const now = new Date();
       const losAngelesTime = new Date(
         now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }),
       );
 
-      // Format date as YYYY-MM-DD in LA timezone
       const year = losAngelesTime.getFullYear();
       const month = String(losAngelesTime.getMonth() + 1).padStart(2, "0");
       const day = String(losAngelesTime.getDate()).padStart(2, "0");
       const today = `${year}-${month}-${day}`;
 
-      // Get current time in HH:MM format with 5-minute buffer
       const bufferTime = new Date(losAngelesTime.getTime() - 5 * 60000);
       const hours = bufferTime.getHours().toString().padStart(2, "0");
       const minutes = bufferTime.getMinutes().toString().padStart(2, "0");
       const currentTime = `${hours}:${minutes}`;
 
-      // Get all reminders from today onwards
       const upcomingReminders = reminders.filter((r) => {
-        // If it's today, only show reminders that haven't passed yet (with buffer)
         if (r.date === today) {
           return r.time >= currentTime;
         }
-        // Show all future date reminders
         return r.date > today;
       });
 
@@ -95,16 +98,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.type("text/plain").send("No upcoming reminders!");
       }
 
-      // Sort by date then time to get the NEXT one
       upcomingReminders.sort((a, b) => {
         if (a.date !== b.date) return a.date.localeCompare(b.date);
         return a.time.localeCompare(b.time);
       });
 
-      // Get only the FIRST (next) reminder
       const nextReminder = upcomingReminders[0];
 
-      // Format date with day abbreviation (without year)
       const reminderDate = new Date(nextReminder.date + "T00:00:00");
       const dayAbbrev = reminderDate
         .toLocaleDateString("en-US", { weekday: "short" })
@@ -114,14 +114,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         day: "2-digit",
       });
 
-      // Convert 24-hour time to 12-hour with AM/PM
       const [hours24, minutesStr] = nextReminder.time.split(":");
       const hour = parseInt(hours24);
       const ampm = hour >= 12 ? "PM" : "AM";
       const hours12 = hour % 12 || 12;
       const time12Hour = `${hours12}:${minutesStr} ${ampm}`;
 
-      // Format response
       let response = "";
       response += `When: ${dayAbbrev}, ${monthDay}, ${time12Hour}\n`;
       response += `Plan: ${nextReminder.title}\n`;
@@ -134,7 +132,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Reminder routes
   app.post("/api/reminders", async (req, res) => {
     try {
       const validatedData = insertReminderSchema.parse(req.body);
