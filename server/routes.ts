@@ -77,40 +77,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
         now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }),
       );
 
+      // DEBUG: Log current times
+      console.log("🕐 Server time (UTC):", now.toISOString());
+      console.log("🕐 LA time:", losAngelesTime.toString());
+
       const year = losAngelesTime.getFullYear();
       const month = String(losAngelesTime.getMonth() + 1).padStart(2, "0");
       const day = String(losAngelesTime.getDate()).padStart(2, "0");
       const today = `${year}-${month}-${day}`;
 
-      // CHANGE 1: Buffer now adds 10 minutes (shows reminders early)
-      const bufferTime = new Date(losAngelesTime.getTime() + 10 * 60000);
-      const hours = bufferTime.getHours().toString().padStart(2, "0");
-      const minutes = bufferTime.getMinutes().toString().padStart(2, "0");
-      const currentTime = `${hours}:${minutes}`;
+      console.log("📅 Today string:", today);
 
-      // CHANGE 2: Filter with timezone-aware past reminder check
+      // Show reminders in the next 10 minutes
+      const currentTimeMs = losAngelesTime.getTime();
+      const futureTimeMs = currentTimeMs + 10 * 60000; // 10 minutes from now
+
+      const hours = losAngelesTime.getHours().toString().padStart(2, "0");
+      const minutes = losAngelesTime.getMinutes().toString().padStart(2, "0");
+      const currentTime = `${hours}:${minutes}`; // Current time (e.g., 19:20)
+
+      const futureTime = new Date(futureTimeMs);
+      const futureHours = futureTime.getHours().toString().padStart(2, "0");
+      const futureMinutes = futureTime.getMinutes().toString().padStart(2, "0");
+      const futureTimeStr = `${futureHours}:${futureMinutes}`; // Future time (e.g., 19:30)
+
+      console.log("⏰ Current time:", currentTime);
+      console.log("⏰ Window end time:", futureTimeStr);
+      console.log("📋 Total reminders:", reminders.length);
+
       const upcomingReminders = reminders.filter((r) => {
-        // Create full datetime string in LA timezone
-        const reminderDateTimeStr = `${r.date}T${r.time}:00`;
-        const reminderDateTime = new Date(
-          new Date(reminderDateTimeStr).toLocaleString("en-US", {
-            timeZone: "America/Los_Angeles",
-          }),
+        console.log(
+          `\n🔍 Checking reminder: ${r.title} at ${r.date} ${r.time}`,
         );
 
-        // Skip reminders that are already in the past
-        if (reminderDateTime < losAngelesTime) {
+        // Future dates always show
+        if (r.date > today) {
+          console.log("  ✅ Future date - included");
+          return true;
+        }
+
+        // Past dates never show
+        if (r.date < today) {
+          console.log("  ❌ Past date - excluded");
           return false;
         }
 
-        // Apply buffer check for today's reminders
+        // Today: show if within the next 10 minutes
         if (r.date === today) {
-          return r.time >= currentTime;
+          const isUpcoming = r.time >= currentTime && r.time <= futureTimeStr;
+          console.log(
+            `  ${isUpcoming ? "✅" : "❌"} Today: ${currentTime} <= ${r.time} <= ${futureTimeStr}? ${isUpcoming}`,
+          );
+          return isUpcoming;
         }
 
-        // Include all future dates
-        return r.date > today;
+        return false;
       });
+
+      console.log("\n📊 Upcoming reminders count:", upcomingReminders.length);
 
       if (upcomingReminders.length === 0) {
         return res.type("text/plain").send("No upcoming reminders!");
@@ -122,6 +146,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const nextReminder = upcomingReminders[0];
+      console.log(
+        "🎯 Next reminder:",
+        nextReminder.title,
+        "at",
+        nextReminder.date,
+        nextReminder.time,
+      );
 
       const reminderDate = new Date(nextReminder.date + "T00:00:00");
       const dayAbbrev = reminderDate
@@ -187,7 +218,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // CHANGE 3: Mark complete endpoint - deletes reminder when marked done
+  // Mark complete endpoint - deletes reminder when marked done
   app.post("/api/reminders/:id/complete", async (req, res) => {
     try {
       const deleted = await storage.deleteReminder(req.params.id);
