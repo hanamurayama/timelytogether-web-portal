@@ -82,14 +82,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const day = String(losAngelesTime.getDate()).padStart(2, "0");
       const today = `${year}-${month}-${day}`;
 
+      // CHANGE 1: Buffer now adds 10 minutes (shows reminders early)
       const bufferTime = new Date(losAngelesTime.getTime() + 10 * 60000);
       const hours = bufferTime.getHours().toString().padStart(2, "0");
       const minutes = bufferTime.getMinutes().toString().padStart(2, "0");
       const currentTime = `${hours}:${minutes}`;
 
+      // CHANGE 2: Filter with timezone-aware past reminder check
       const upcomingReminders = reminders.filter((r) => {
-        // Create full datetime for the reminder
-        const reminderDateTime = new Date(`${r.date}T${r.time}:00`);
+        // Create full datetime string in LA timezone
+        const reminderDateTimeStr = `${r.date}T${r.time}:00`;
+        const reminderDateTime = new Date(
+          new Date(reminderDateTimeStr).toLocaleString("en-US", {
+            timeZone: "America/Los_Angeles",
+          }),
+        );
 
         // Skip reminders that are already in the past
         if (reminderDateTime < losAngelesTime) {
@@ -180,7 +187,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  //mark complete > delete reminder
+  // CHANGE 3: Mark complete endpoint - deletes reminder when marked done
   app.post("/api/reminders/:id/complete", async (req, res) => {
     try {
       const deleted = await storage.deleteReminder(req.params.id);
