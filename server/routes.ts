@@ -82,15 +82,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const day = String(losAngelesTime.getDate()).padStart(2, "0");
       const today = `${year}-${month}-${day}`;
 
-      const bufferTime = new Date(losAngelesTime.getTime() - 5 * 60000);
+      const bufferTime = new Date(losAngelesTime.getTime() + 10 * 60000);
       const hours = bufferTime.getHours().toString().padStart(2, "0");
       const minutes = bufferTime.getMinutes().toString().padStart(2, "0");
       const currentTime = `${hours}:${minutes}`;
 
       const upcomingReminders = reminders.filter((r) => {
+        // Create full datetime for the reminder
+        const reminderDateTime = new Date(`${r.date}T${r.time}:00`);
+
+        // Skip reminders that are already in the past
+        if (reminderDateTime < losAngelesTime) {
+          return false;
+        }
+
+        // Apply buffer check for today's reminders
         if (r.date === today) {
           return r.time >= currentTime;
         }
+
+        // Include all future dates
         return r.date > today;
       });
 
@@ -166,6 +177,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting reminder:", error);
       res.status(500).json({ error: "Failed to delete reminder" });
+    }
+  });
+
+  //mark complete > delete reminder
+  app.post("/api/reminders/:id/complete", async (req, res) => {
+    try {
+      const deleted = await storage.deleteReminder(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Reminder not found" });
+      }
+      res.json({
+        success: true,
+        message: "Reminder marked complete and deleted",
+      });
+    } catch (error) {
+      console.error("Error completing reminder:", error);
+      res.status(500).json({ error: "Failed to complete reminder" });
     }
   });
 
