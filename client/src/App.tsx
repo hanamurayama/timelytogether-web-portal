@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Router as WouterRouter } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -6,25 +6,25 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import TimelyTogetherApp from "@/components/TimelyTogetherApp";
 import NotFound from "@/pages/not-found";
 
-function Router() {
+function Routes() {
   return (
     <Switch>
       <Route path="/" component={TimelyTogetherApp} />
-      {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        {/* GitHub Pages base path */}
+        <WouterRouter base={import.meta.env.BASE_URL}>
+          <Routes />
+        </WouterRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
 }
-
-export default App;
