@@ -56,7 +56,13 @@ This project represents a completed prototype phase within a graduate thesis. Fu
 - Deeper integration with physical display hardware
 - Long-term use and family communication patterns
 
-## License
+## Contact & Use 
 
-This project is shared for educational and portfolio purposes.
+This project is shared for educational and portfolio review purposes only.
+
+If you are interested in expanding this project and exploring collaboration, please feel free to reach out:
+
+📧 hanamurayama.work@gmail.com
+
+I’d love to expand the scope of this project😊
 
